@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { signIn } from "@/lib/auth-client";
+import { signIn, getSession } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
 export default function SignInPage() {
@@ -32,7 +32,20 @@ export default function SignInPage() {
             if (result.error) {
                 setError(result.error.message || "Sign in failed");
             } else {
-                router.push("/dashboard");
+                // Fetch user session to determine role
+                const session = await getSession();
+                if (session?.data?.user) {
+                    const user = session.data.user;
+                    if ((user as any).role === "TEACHER") {
+                        router.push("/dashboard/teacher");
+                    } else if ((user as any).role === "ADMIN") {
+                        router.push("/dashboard/admin");
+                    } else {
+                        router.push("/dashboard/student");
+                    }
+                } else {
+                    router.push("/onboarding");
+                }
             }
         } catch (err) {
             setError("An unexpected error occurred");
