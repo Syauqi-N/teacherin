@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { signIn, getSession } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
+import { UserWithRole } from "@/types/auth";
 
 export default function SignInPage() {
     const [email, setEmail] = useState("");
@@ -35,10 +36,10 @@ export default function SignInPage() {
                 // Fetch user session to determine role
                 const session = await getSession();
                 if (session?.data?.user) {
-                    const user = session.data.user;
-                    if ((user as any).role === "TEACHER") {
+                    const user = session.data.user as UserWithRole;
+                    if (user.role === "TEACHER") {
                         router.push("/dashboard/teacher");
-                    } else if ((user as any).role === "ADMIN") {
+                    } else if (user.role === "ADMIN") {
                         router.push("/dashboard/admin");
                     } else {
                         router.push("/dashboard/student");

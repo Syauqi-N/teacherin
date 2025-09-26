@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { payouts } from "@/db/schema/misc";
-import { teachers, profiles } from "@/db/schema/users";
+import { payouts, bookings, teachers, profiles } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { UserWithRole } from "@/types/auth";
@@ -178,7 +177,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/payouts/[id]/status - Update payout status (for admins)
-export async function PUT(request: NextRequest, context: { params: Promise<{}> }) {
+export async function PUT(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({

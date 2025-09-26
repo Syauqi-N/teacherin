@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/orders/[id]/status - Update order status (for payment processing)
-export async function PUT(request: NextRequest, context: { params: Promise<{}> }) {
+export async function PUT(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({
@@ -199,7 +199,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{}> }
 }
 
 // GET /api/orders/[id]/download - Get download link for purchased material
-export async function DOWNLOAD(request: NextRequest, context: { params: Promise<{}> }) {
+export async function DOWNLOAD(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({

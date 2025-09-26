@@ -22,7 +22,7 @@ export default function TeacherDashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isPending && (!session?.user || (session.user as any).role !== "TEACHER")) {
+          if (!isPending && (!session?.user || (session.user as UserWithRole).role !== "TEACHER")) { {
       router.push("/dashboard");
     }
   }, [session, isPending, router]);
@@ -64,7 +64,7 @@ export default function TeacherDashboardPage() {
               <div className="hidden md:flex flex-col">
                 <span className="text-sm font-medium">{session.user.name}</span>
                 <Badge variant="secondary" className="text-xs">
-                  {(session.user as any).role}
+                  {(session.user as UserWithRole).role}
                 </Badge>
               </div>
             </div>

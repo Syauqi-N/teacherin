@@ -91,7 +91,7 @@ export async function NOTIFICATION(request: NextRequest) {
 }
 
 // GET /api/payments/[id] - Get payment details
-export async function GET(request: NextRequest, context: { params: Promise<{}> }) {
+export async function GET(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   
   try {

@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { UserWithRole } from "@/types/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -68,7 +69,7 @@ export async function middleware(request: NextRequest) {
     }
     
     // Check if user has required role
-    const userRole = (session.user as any).role;
+    const userRole = (session.user as UserWithRole).role;
     if (protectedRoute.roles && !protectedRoute.roles.includes(userRole)) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }

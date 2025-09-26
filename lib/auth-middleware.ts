@@ -1,4 +1,6 @@
 import { auth } from "@/lib/auth";
+import type { Session } from "next-auth";
+import { UserWithRole } from "@/types/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 // Define role-based access rules
@@ -18,7 +20,7 @@ export async function checkRoleAccess(request: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  const role = (session.user as any).role as string;
+  const role = (session.user as UserWithRole).role as string;
   const pathname = request.nextUrl.pathname;
 
   // Check if the user's role has access to this path

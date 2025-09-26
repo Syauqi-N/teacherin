@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/sessions/[id]/start - Start a session
-export async function START(request: NextRequest, context: { params: Promise<{}> }) {
+export async function START(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   try {
     const session = await auth.api.getSession({
       headers: request.headers,
@@ -245,7 +245,7 @@ export async function START(request: NextRequest, context: { params: Promise<{}>
 }
 
 // PUT /api/sessions/[id]/end - End a session
-export async function END(request: NextRequest, context: { params: Promise<{}> }) {
+export async function END(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   try {
     const session = await auth.api.getSession({
       headers: request.headers,

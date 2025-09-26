@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { UserWithRole } from "@/types/auth";
 
 export default function ProfilePage() {
   const { data: session, isPending } = useSession();
@@ -35,7 +36,7 @@ export default function ProfilePage() {
         email: session.user.email || "",
         bio: "",
         city: "",
-        role: (session.user as any).role || "",
+        role: (session.user as UserWithRole).role || "",
       });
       
       // Fetch full profile data

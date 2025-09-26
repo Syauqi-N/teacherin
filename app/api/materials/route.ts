@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/materials/[id] - Update a material
-export async function PUT(request: NextRequest, context: { params: Promise<{}> }) {
+export async function PUT(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({
@@ -215,7 +215,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{}> }
 }
 
 // DELETE /api/materials/[id] - Delete a material
-export async function DELETE(request: NextRequest, context: { params: Promise<{}> }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({
@@ -257,7 +257,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{}
 }
 
 // GET /api/materials/[id] - Get a specific material
-export async function GET_BY_ID(request: NextRequest, context: { params: Promise<{}> }) {
+export async function GET_BY_ID(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const materialId = id;

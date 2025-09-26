@@ -15,13 +15,14 @@ import {
   LogOut,
   Settings
 } from "lucide-react";
+import { UserWithRole } from "@/types/auth";
 
 export default function AdminDashboardPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isPending && (!session?.user || (session.user as any).role !== "ADMIN")) {
+    if (!isPending && (!session?.user || (session.user as UserWithRole).role !== "ADMIN")) {
       router.push("/dashboard");
     }
   }, [session, isPending, router]);
@@ -63,7 +64,7 @@ export default function AdminDashboardPage() {
               <div className="hidden md:flex flex-col">
                 <span className="text-sm font-medium">{session.user.name}</span>
                 <Badge variant="secondary" className="text-xs">
-                  {(session.user as any).role}
+                  {(session.user as UserWithRole).role}
                 </Badge>
               </div>
             </div>

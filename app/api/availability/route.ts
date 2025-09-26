@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     
     // Insert new slots
     const newSlots = await db.insert(availabilitySlots).values(
-      slots.map((slot: any) => ({
+      slots.map((slot: { startTime: string; endTime: string }) => ({
         teacherId: teacher.id,
         startTime: new Date(slot.startTime),
         endTime: new Date(slot.endTime),
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE /api/availability/[id] - Delete an availability slot (for teachers)
-export async function DELETE(request: NextRequest, context: { params: Promise<{}> }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({

@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/reviews/[id] - Update a review
-export async function PUT(request: NextRequest, context: { params: Promise<{}> }) {
+export async function PUT(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({
@@ -180,6 +180,10 @@ export async function PUT(request: NextRequest, context: { params: Promise<{}> }
       where: eq(reviews.id, reviewId),
       with: {
         booking: {
+          columns: {
+            studentProfileId: true,
+            teacherId: true,
+          },
           with: {
             teacher: true,
           }
@@ -212,7 +216,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{}> }
 }
 
 // DELETE /api/reviews/[id] - Delete a review
-export async function DELETE(request: NextRequest, context: { params: Promise<{}> }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({
@@ -230,6 +234,10 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{}
       where: eq(reviews.id, reviewId),
       with: {
         booking: {
+          columns: {
+            studentProfileId: true,
+            teacherId: true,
+          },
           with: {
             teacher: true,
           }

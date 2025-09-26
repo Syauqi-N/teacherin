@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { UserWithRole } from "@/types/auth";
 
 export default function DashboardPage() {
   const { data: session, isPending } = useSession();
@@ -10,11 +11,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isPending && session?.user) {
-      if ((session.user as any).role === "TEACHER") {
+      if ((session.user as UserWithRole).role === "TEACHER") {
         router.push("/dashboard/teacher");
-      } else if ((session.user as any).role === "STUDENT") {
+      } else if ((session.user as UserWithRole).role === "STUDENT") {
         router.push("/dashboard/student");
-      } else if ((session.user as any).role === "ADMIN") {
+      } else if ((session.user as UserWithRole).role === "ADMIN") {
         router.push("/dashboard/admin");
       } else {
         router.push("/onboarding");

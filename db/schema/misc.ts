@@ -1,6 +1,5 @@
 import { pgTable, uuid, timestamp, text, uniqueIndex, jsonb, boolean } from "drizzle-orm/pg-core";
-import { profiles } from "./users";
-import { teachers } from "./users";
+import { profiles, teachers } from "./index";
 
 // Favorites (students can favorite teachers)
 export const favorites = pgTable("favorites", {

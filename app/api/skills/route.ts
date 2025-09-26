@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { skills } from "@/db/schema/users";
 import { auth } from "@/lib/auth";
 import { like } from "drizzle-orm";
+import { UserWithRole } from "@/types/auth";
 
 // GET /api/skills - Get all skills or search by name
 export async function GET(request: NextRequest) {
@@ -32,14 +33,14 @@ export async function POST(request: NextRequest) {
       headers: request.headers,
     });
 
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session || (session.user as UserWithRole).role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { name } = await request.json();
     
     // Check if skill already exists
-    const existingSkill = await db.select().from(skills).where(like(skills.name, name)).limit(1);
+    const existingSkill = await db.select().from(skills).where(like(skills.name, `%${name}%`)).limit(1);
     
     if (existingSkill.length > 0) {
       return NextResponse.json({ error: "Skill already exists" }, { status: 400 });

@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 }
 
 // PUT /api/admin/users/[id]/status - Update user status (for admins)
-export async function PUT(request: NextRequest, context: { params: Promise<{}> }) {
+export async function PUT(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({
@@ -97,7 +97,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{}> }
 }
 
 // DELETE /api/admin/users/[id] - Delete a user (for admins)
-export async function DELETE(request: NextRequest, context: { params: Promise<{}> }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({

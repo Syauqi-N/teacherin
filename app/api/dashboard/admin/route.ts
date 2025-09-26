@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { users, profiles, teachers, bookings, payments, materials } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { eq, desc, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
+import { UserWithRole } from "@/types/auth";
 
 // GET /api/dashboard/admin - Get admin dashboard data
 export async function GET(request: NextRequest) {
@@ -11,7 +13,7 @@ export async function GET(request: NextRequest) {
       headers: request.headers,
     });
 
-    if (!session || (session.user as any).role !== "ADMIN") {
+    if (!session || (session.user as UserWithRole).role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -29,10 +31,11 @@ export async function GET(request: NextRequest) {
     .limit(10);
 
     // Get recent bookings
+    const teacherProfiles = alias(profiles, "teacher_profiles");
     const recentBookings = await db.select({
       id: bookings.id,
       studentName: profiles.fullName,
-      teacherName: sql<string>`teacher_profiles.full_name`,
+      teacherName: teacherProfiles.fullName,
       startTime: bookings.startTime,
       status: bookings.status,
       totalPrice: bookings.totalPrice,
@@ -40,7 +43,7 @@ export async function GET(request: NextRequest) {
     .from(bookings)
     .innerJoin(profiles, eq(bookings.studentProfileId, profiles.id))
     .innerJoin(teachers, eq(bookings.teacherId, teachers.id))
-    .innerJoin(profiles.as('teacherProfiles'), eq(teachers.profileId, sql`teacher_profiles.id`))
+    .innerJoin(teacherProfiles, eq(teachers.profileId, teacherProfiles.id))
     .orderBy(desc(bookings.createdAt))
     .limit(10);
 

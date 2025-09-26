@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
       conditions.push(gte(teachers.avgRating, minRating));
     }
     
+    // Build query without WHERE clause initially
     let query = db.select({
       id: teachers.id,
       profileId: profiles.id,
@@ -67,15 +68,15 @@ export async function GET(request: NextRequest) {
       createdAt: teachers.createdAt,
     })
     .from(teachers)
-    .innerJoin(profiles, eq(teachers.profileId, profiles.id))
-    .where(conditions.length > 0 ? and(...conditions) : undefined);
+    .innerJoin(profiles, eq(teachers.profileId, profiles.id));
     
     // Filter by skills
     if (skillIds.length > 0) {
-      // @ts-ignore
-      query
+      query = query
         .innerJoin(teacherSkills, eq(teachers.id, teacherSkills.teacherId))
         .where(and(...conditions, inArray(teacherSkills.skillId, skillIds)));
+    } else if (conditions.length > 0) {
+      query = query.where(and(...conditions));
     }
     
     // Add pagination
@@ -89,14 +90,17 @@ export async function GET(request: NextRequest) {
       .innerJoin(profiles, eq(teachers.profileId, profiles.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined);
     
+    let countQueryWithFilters = countQuery;
+    
     if (skillIds.length > 0) {
-      // @ts-ignore
-      countQuery
+      countQueryWithFilters = countQueryWithFilters
         .innerJoin(teacherSkills, eq(teachers.id, teacherSkills.teacherId))
         .where(and(...conditions, inArray(teacherSkills.skillId, skillIds)));
+    } else if (conditions.length > 0) {
+      countQueryWithFilters = countQueryWithFilters.where(and(...conditions));
     }
     
-    const countResult = await countQuery;
+    const countResult = await countQueryWithFilters;
     const total = countResult[0].count;
     
     return NextResponse.json({
@@ -115,7 +119,7 @@ export async function GET(request: NextRequest) {
 }
 
 // GET /api/teachers/[id] - Get a specific teacher by ID
-export async function GET_BY_ID(request: NextRequest, context: { params: Promise<{}> }) {
+export async function GET_BY_ID(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   try {
     const { id } = await context.params as { id: string };
     const teacherId = id;

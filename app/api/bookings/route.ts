@@ -68,7 +68,6 @@ export async function GET(request: NextRequest) {
     
     // Filter by status if provided
     if (status) {
-      // @ts-ignore
       query = query.where(eq(bookings.status, status));
     }
     
@@ -83,26 +82,25 @@ export async function GET(request: NextRequest) {
       .from(bookings)
       .innerJoin(teachers, eq(bookings.teacherId, teachers.id));
       
+    let countQueryWithFilters = countQuery;
+    
     if ((session.user as UserWithRole).role === "STUDENT") {
-      // @ts-ignore
-      countQuery.where(eq(bookings.studentProfileId, (session.user as UserWithRole).profileId!));
+      countQueryWithFilters = countQueryWithFilters.where(eq(bookings.studentProfileId, (session.user as UserWithRole).profileId!));
     } else if ((session.user as UserWithRole).role === "TEACHER") {
       const teacher = await db.query.teachers.findFirst({
         where: eq(teachers.profileId, (session.user as UserWithRole).profileId!),
       });
       
       if (teacher) {
-        // @ts-ignore
-        countQuery.where(eq(bookings.teacherId, teacher.id));
+        countQueryWithFilters = countQueryWithFilters.where(eq(bookings.teacherId, teacher.id));
       }
     }
     
     if (status) {
-      // @ts-ignore
-      countQuery.where(eq(bookings.status, status));
+      countQueryWithFilters = countQueryWithFilters.where(eq(bookings.status, status));
     }
     
-    const countResult = await countQuery;
+    const countResult = await countQueryWithFilters;
     const total = countResult[0].count;
     
     return NextResponse.json({
@@ -181,7 +179,8 @@ export async function POST(request: NextRequest) {
     
     // Calculate total price
     const durationHours = (new Date(slot.endTime).getTime() - new Date(slot.startTime).getTime()) / (1000 * 60 * 60);
-    const totalPrice = (parseFloat(slot.teacher?.profile?.pricePerHour || "0") * durationHours).toString();
+    const pricePerHour = slot.teacher?.profile?.pricePerHour || "0";
+    const totalPrice = (parseFloat(pricePerHour) * durationHours).toString();
     
     // Create booking
     const [booking] = await db.insert(bookings).values({
@@ -208,7 +207,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/bookings/[id]/status - Update booking status
-export async function PUT(request: NextRequest, context: { params: Promise<{}> }) {
+export async function PUT(request: NextRequest, context: { params: Promise<Record<string, string>> }) {
   const { id } = await context.params as { id: string };
   try {
     const session = await auth.api.getSession({

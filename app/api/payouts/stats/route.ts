@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { bookings, payouts, teachers } from "@/db/schema";
+import { payouts, bookings } from "@/db/schema";
+import { teachers, profiles } from "@/db/schema/users";
 import { auth } from "@/lib/auth";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, gte, lte, sql } from "drizzle-orm";
+import { UserWithRole } from "@/types/auth";
 
 // GET /api/payouts/stats - Get payout statistics (for teachers)
 export async function GET(request: NextRequest) {
@@ -11,13 +13,13 @@ export async function GET(request: NextRequest) {
       headers: request.headers,
     });
 
-    if (!session || (session.user as any).role !== "TEACHER") {
+    if (!session || (session.user as UserWithRole).role !== "TEACHER") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify that the teacher exists
     const teacher = await db.query.teachers.findFirst({
-      where: eq(teachers.profileId, (session.user as any).profileId),
+      where: eq(teachers.profileId, (session.user as UserWithRole).profileId!),
     });
     
     if (!teacher) {

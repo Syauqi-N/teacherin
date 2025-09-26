@@ -25,7 +25,10 @@ export const auth = betterAuth({
                 after: [
                     {
                         matcher: (context) => context.path === "/sign-in",
-                        handler: async (inputContext: any) => {
+                        handler: async (inputContext: {
+                          response?: any;
+                          request?: Request;
+                        }) => {
                             // Fetch user profile with role information
                             if (inputContext.response?.user?.id) {
                                 const userProfile = await db.query.profiles.findFirst({
@@ -55,7 +58,7 @@ export const auth = betterAuth({
     ],
     callbacks: {
         // Add role information to session
-        session: async (session: any) => {
+        session: async (session: { user: any; expires: string }) => {
             const userProfile = await db.query.profiles.findFirst({
                 where: eq(profiles.userId, session.user.id),
             });

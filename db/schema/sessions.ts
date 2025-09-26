@@ -1,7 +1,5 @@
 import { pgTable, uuid, timestamp, text, integer, uniqueIndex, jsonb, boolean } from "drizzle-orm/pg-core";
-import { bookings } from "./bookings";
-import { teachers } from "./users";
-import { profiles } from "./users";
+import { bookings, teachers, profiles } from "./index";
 
 // Session details for lessons
 export const sessions = pgTable("sessions", {

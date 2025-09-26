@@ -1,6 +1,5 @@
 import { pgTable, uuid, timestamp, boolean, text, uniqueIndex, jsonb } from "drizzle-orm/pg-core";
-import { teachers } from "./users";
-import { profiles } from "./users";
+import { teachers, profiles } from "./users";
 
 // Availability slots for teachers
 export const availabilitySlots = pgTable("availability_slots", {
